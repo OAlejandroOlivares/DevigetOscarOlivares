@@ -1,12 +1,13 @@
 package com.app.devigetoscarolivares.Fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -17,24 +18,24 @@ import com.app.devigetoscarolivares.ViewModel.RedditVM
 
 class EntrListFragment : Fragment(), EntriesAdapter.EntriesAdapterListener {
 
-    private lateinit var listener: EntrListFragment.EntrListFragmentInterface
+    private lateinit var listener: EntrListFragmentInterface
     private lateinit var rv :RecyclerView
     private var entries = ArrayList<RedditEntry>()
     private var entriesAdapter = EntriesAdapter(entries,this)
     private var viewmodel = RedditVM.getVmInstance(this)
     private lateinit var scrollListener: RecyclerView.OnScrollListener
-    private var isLoading: Boolean = false
     private var lastVisibleItem: Int = 0
     private var totalItemCount: Int = 0
     private var visibleThreshold = 5
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private var viewManager = LinearLayoutManager(context,LinearLayoutManager.VERTICAL,false)
+    private lateinit var connection : TextView
 
     companion object{
         fun newInstance() : EntrListFragment{
-            val f = EntrListFragment()
-            return f
+            return EntrListFragment()
         }
+
     }
 
     interface EntrListFragmentInterface{
@@ -47,44 +48,58 @@ class EntrListFragment : Fragment(), EntriesAdapter.EntriesAdapterListener {
         savedInstanceState: Bundle?
     ): View? {
         val rootView = inflater.inflate(R.layout.entrie_list,container,false)
+        if (savedInstanceState!= null){
+            entries = savedInstanceState.getParcelableArrayList("entries")!!
+        }
+        Log.d("asd","created")
         rv = rootView.findViewById(R.id.rv_entries)
+        connection = rootView.findViewById(R.id.connection)
         rv.layoutManager = viewManager
         rv.adapter= entriesAdapter
         swipeRefreshLayout = rootView.findViewById(R.id.swipeToRefresh)
-        setupObserver(false)
+        setupScrollListener()
         swipeRefreshLayout.setOnRefreshListener {
-            entriesAdapter.entries = ArrayList<RedditEntry>()
+            entriesAdapter.entries = ArrayList()
             entriesAdapter.notifyDataSetChanged()
             setupObserver(false)
         }
 
+        if (entries.isEmpty()) {
+            setupObserver(false)
+        }else{
+            entriesAdapter.entries = entries
+            entriesAdapter.notifyDataSetChanged()
+        }
+
+        return rootView
+    }
+
+    private fun setupScrollListener() {
         scrollListener = object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 totalItemCount = viewManager.itemCount
                 //last visible item position
                 lastVisibleItem = viewManager.findLastCompletelyVisibleItemPosition()
-                if(!isLoading && totalItemCount <= (lastVisibleItem + visibleThreshold))
-                {
-                    swipeRefreshLayout.isRefreshing = true
+                if (!swipeRefreshLayout.isRefreshing && totalItemCount <= (lastVisibleItem + visibleThreshold)) {
                     setupObserver(true)
-                    isLoading = true
                 }
             }
         }
-
         rv.addOnScrollListener(scrollListener)
-
-        return rootView
     }
 
 
     private  fun setupObserver(refresh: Boolean) {
-        viewmodel.getTopEntries(refresh).observe(this, Observer { entries->
-            isLoading= false
+        swipeRefreshLayout.isRefreshing = true
+        viewmodel.getTopEntries(refresh,this).observe(this, { entries->
             swipeRefreshLayout.isRefreshing = false
             entriesAdapter.entries = entries
-            entriesAdapter.notifyDataSetChanged()
+            if (refresh) {
+                entriesAdapter.notifyDataSetChanged()
+            }else{
+                entriesAdapter.notifyItemRangeChanged(0,entries.count())
+            }
         })
     }
 
@@ -96,6 +111,22 @@ class EntrListFragment : Fragment(), EntriesAdapter.EntriesAdapterListener {
         listener.displayData(redditEntry)
     }
 
+    fun dismissAllItems() {
+        for (i in 0 until entriesAdapter.itemCount){
+            entriesAdapter.entries.removeAt(0)
+            entriesAdapter.notifyItemRemoved(0)
+            entriesAdapter.notifyItemRangeChanged(0,entriesAdapter.itemCount)
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putParcelableArrayList("entries",entriesAdapter.entries)
+    }
+
+    fun displayNoInternetConnection() {
+        Toast.makeText(context,"No internet connection try again", Toast.LENGTH_LONG).show()
+    }
 
 
 }

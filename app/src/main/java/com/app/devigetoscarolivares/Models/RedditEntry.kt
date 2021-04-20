@@ -1,5 +1,8 @@
 package com.app.devigetoscarolivares.Models
 
+import android.os.Parcel
+import android.os.Parcelable
+
 data class RedditEntry(
 var domain:String?,
 var banned_by:String?,
@@ -44,4 +47,110 @@ var num_comments:Int?,
 var visited:Boolean?,
 var num_reports:Int?,
 var distinguished:String?
-)
+) : Parcelable{
+    constructor(parcel: Parcel) : this(
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readValue(Int::class.java.classLoader) as? Int,
+            parcel.readString(),
+            parcel.readValue(Boolean::class.java.classLoader) as? Boolean,
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readValue(Boolean::class.java.classLoader) as? Boolean,
+            parcel.readValue(Boolean::class.java.classLoader) as? Boolean,
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readValue(Boolean::class.java.classLoader) as? Boolean,
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readValue(Int::class.java.classLoader) as? Int,
+            parcel.readString(),
+            parcel.readValue(Boolean::class.java.classLoader) as? Boolean,
+            parcel.readValue(Boolean::class.java.classLoader) as? Boolean,
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readValue(Boolean::class.java.classLoader) as? Boolean,
+            parcel.readValue(Int::class.java.classLoader) as? Int,
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readString(),
+            parcel.readValue(Int::class.java.classLoader) as? Int,
+            parcel.readValue(Int::class.java.classLoader) as? Int,
+            parcel.readValue(Int::class.java.classLoader) as? Int,
+            parcel.readValue(Boolean::class.java.classLoader) as? Boolean,
+            parcel.readValue(Int::class.java.classLoader) as? Int,
+            parcel.readString())
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(domain)
+        parcel.writeString(banned_by)
+        parcel.writeString(media_embed)
+        parcel.writeString(subreddit)
+        parcel.writeString(selftext_html)
+        parcel.writeString(selftext)
+        parcel.writeString(likes)
+        parcel.writeString(user_reports)
+        parcel.writeString(secure_media)
+        parcel.writeString(link_flair_text)
+        parcel.writeString(id)
+        parcel.writeValue(gilded)
+        parcel.writeString(secure_media_embed)
+        parcel.writeValue(clicked)
+        parcel.writeString(report_reasons)
+        parcel.writeString(author)
+        parcel.writeString(media)
+        parcel.writeString(score)
+        parcel.writeString(approved_by)
+        parcel.writeValue(over_18)
+        parcel.writeValue(hidden)
+        parcel.writeString(thumbnail)
+        parcel.writeString(subreddit_id)
+        parcel.writeValue(edited)
+        parcel.writeString(link_flair_css_class)
+        parcel.writeString(author_flair_css_class)
+        parcel.writeValue(downs)
+        parcel.writeString(mod_reports)
+        parcel.writeValue(saved)
+        parcel.writeValue(is_self)
+        parcel.writeString(name)
+        parcel.writeString(permalink)
+        parcel.writeValue(stickied)
+        parcel.writeValue(created)
+        parcel.writeString(url)
+        parcel.writeString(author_flair_text)
+        parcel.writeString(title)
+        parcel.writeValue(created_utc)
+        parcel.writeValue(ups)
+        parcel.writeValue(num_comments)
+        parcel.writeValue(visited)
+        parcel.writeValue(num_reports)
+        parcel.writeString(distinguished)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<RedditEntry> {
+        override fun createFromParcel(parcel: Parcel): RedditEntry {
+            return RedditEntry(parcel)
+        }
+
+        override fun newArray(size: Int): Array<RedditEntry?> {
+            return arrayOfNulls(size)
+        }
+    }
+
+}

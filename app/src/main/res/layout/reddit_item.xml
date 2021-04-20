@@ -20,31 +20,30 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/guideline2"/>
+            app:layout_constraintEnd_toStartOf="@id/guideline2"
+            />
 
         <TextView
             android:id="@+id/author"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:maxLines="1"
             app:layout_constraintStart_toEndOf="@+id/image"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/hours"
             tools:text="Incredible title" />
 
         <TextView
             android:id="@+id/title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginVertical="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/delete"
             app:layout_constraintStart_toStartOf="@+id/author"
             app:layout_constraintTop_toBottomOf="@+id/author"
             tools:text="Incredible title for post"
-            android:maxLines="1"/>
+            android:layout_marginEnd="4dp"/>
 
 
         <ImageView
@@ -64,6 +63,7 @@
             android:src="@drawable/ic_baseline_comment_24"
             app:layout_constraintBottom_toBottomOf="@+id/tv_ups"
             app:layout_constraintEnd_toStartOf="@+id/comments_count"
+
             app:layout_constraintTop_toTopOf="@+id/tv_ups" />
 
         <ImageView
@@ -80,9 +80,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:text="0"
+            android:text="@string/_0"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="8dp"
             app:layout_constraintTop_toBottomOf="@+id/title" />
 
         <TextView
@@ -90,9 +91,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:text="0"
+            android:text="@string/_0"
             app:layout_constraintBottom_toBottomOf="@+id/tv_ups"
             app:layout_constraintEnd_toStartOf="@+id/imageView"
+
             app:layout_constraintTop_toTopOf="@+id/tv_ups" />
 
         <androidx.constraintlayout.widget.Guideline
@@ -101,6 +103,29 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.2" />
+
+        <TextView
+            android:id="@+id/hours"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:maxLines="1"
+            android:textAlignment="viewEnd"
+            app:layout_constraintEnd_toStartOf="@+id/delete"
+            app:layout_constraintStart_toEndOf="@+id/image"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="10 hours ago" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            app:layout_constraintTop_toTopOf="@id/title"
+            app:layout_constraintBottom_toBottomOf="@id/title"
+            app:layout_constraintEnd_toEndOf="@id/delete"
+            app:layout_constraintStart_toStartOf="@id/delete"
+            android:id="@+id/status"
+            />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>
