@@ -51,7 +51,6 @@ class EntrListFragment : Fragment(), EntriesAdapter.EntriesAdapterListener {
         if (savedInstanceState!= null){
             entries = savedInstanceState.getParcelableArrayList("entries")!!
         }
-        Log.d("asd","created")
         rv = rootView.findViewById(R.id.rv_entries)
         connection = rootView.findViewById(R.id.connection)
         rv.layoutManager = viewManager

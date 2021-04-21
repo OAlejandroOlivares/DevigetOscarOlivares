@@ -27,7 +27,7 @@ class DownloadImageHelper {
         val downloadManager =  context.getSystemService(DOWNLOAD_SERVICE) as DownloadManager
         val downloadID = downloadManager.enqueue(request) // enqueue puts the download request in the queue.
 
-        // using query method
+        // using query method to "observe" download
         var finishDownload = false
         while (!finishDownload) {
             val cursor = downloadManager.query(DownloadManager.Query().setFilterById(downloadID))

@@ -23,29 +23,41 @@ class RedditVM : ViewModel() {
     private val client = OkHttpClient()
     private var entries : MutableLiveData<ArrayList<RedditEntry>> = MutableLiveData()
     var token :String? = null
+    //Url to get application only oauth token
+    //https://github.com/reddit-archive/reddit/wiki/OAuth2
+    private val OAUTH_TYPE = "https://oauth.reddit.com/grants/installed_client"
+    // Client Id from reddit app developers platform
+    private val CLIENT_ID ="WoWu_4334wTkwQ"
     private val formBody = FormBody.Builder()
-        .add("grant_type", "https://oauth.reddit.com/grants/installed_client")
+        .add("grant_type", OAUTH_TYPE)
         .add("device_id", UUID.randomUUID().toString())
         .build()
-    private val CLIENT_ID ="WoWu_4334wTkwQ"
     private var mafter: String? = null
+
+    //if we needed to retrieve post from other listing endpoint we should remove "/top" from URL and
+    // put the listing name in the function params, to add it to url and get those posts
+    private val URL_TOP_POST = "https://oauth.reddit.com/top"
+
+    //User agent created as reddit documentation explains
+    //https://github.com/reddit-archive/reddit/wiki/API
+    private val USER_AGENT = "devigetOscar 1.0 by /u/No_Butterscotch2578"
 
     fun getTopEntries(after: Boolean, fragment: EntrListFragment?) : LiveData<ArrayList<RedditEntry>> {
         var tmpentries:ArrayList<RedditEntry>? = ArrayList()
-
-        val httpBuilder: HttpUrl.Builder = "https://oauth.reddit.com/top".toHttpUrlOrNull()!!.newBuilder()
+        //using http builder cause the GET request requires a payload with the last item ID for the pagination functionality
+        // https://www.reddit.com/dev/api/ -> OverView -> Listings
+        val httpBuilder: HttpUrl.Builder = URL_TOP_POST.toHttpUrlOrNull()!!.newBuilder()
         httpBuilder.addQueryParameter("after",mafter)
         val request = Request.Builder()
-            //.url("https://www.reddit.com/api/v1/authorize?client_id=${CLIENT_ID}&response_type=token&state=RANDOM_STRING&redirect_uri=http://127.0.0.1&scope=read")
             .url(httpBuilder.build())
             .addHeader("Authorization", "bearer $token")
-            .addHeader("User-agent", "devigetOscar 1.0 by /u/No_Butterscotch2578")
+            .addHeader("User-agent", USER_AGENT)
             .build()
         CoroutineScope(IO).launch {
             try {
                 client.newCall(request).execute().use { response ->
                     if (!response.isSuccessful) { //throw IOException("Unexpected code $response")
-                        Log.d("asd", response.message)
+                        Log.e("Error", response.message)
                     }
 
                     if (after) {
@@ -121,11 +133,12 @@ class RedditVM : ViewModel() {
         return entries
     }
 
+    private val URL_ACCESS_TOKEN = "https://www.reddit.com/api/v1/access_token"
+
     fun authReddit(): Boolean {
 
         val request = Request.Builder()
-            //.url("https://www.reddit.com/api/v1/authorize?client_id=${CLIENT_ID}&response_type=token&state=RANDOM_STRING&redirect_uri=http://127.0.0.1&scope=read")
-            .url("https://www.reddit.com/api/v1/access_token")
+            .url(URL_ACCESS_TOKEN)
             .post(formBody)
             .addHeader("Authorization", Credentials.basic(CLIENT_ID, ""))
             .build()
@@ -140,7 +153,7 @@ class RedditVM : ViewModel() {
                 return true
             }
         }catch (e : Exception){
-            Log.d("asd", e.message.toString())
+            Log.e("asd", e.message.toString())
             return false
         }
     }

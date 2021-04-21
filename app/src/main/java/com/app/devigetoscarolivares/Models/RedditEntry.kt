@@ -3,6 +3,7 @@ package com.app.devigetoscarolivares.Models
 import android.os.Parcel
 import android.os.Parcelable
 
+//data class for posts, parcelable implementation to persist data over phone rotation
 data class RedditEntry(
 var domain:String?,
 var banned_by:String?,
