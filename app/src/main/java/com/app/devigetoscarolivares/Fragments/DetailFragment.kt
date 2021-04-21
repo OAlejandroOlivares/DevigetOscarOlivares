@@ -1,6 +1,8 @@
 package com.app.devigetoscarolivares.Fragments
 
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +17,7 @@ import com.app.devigetoscarolivares.Models.RedditEntry
 import com.app.devigetoscarolivares.R
 import com.app.devigetoscarolivares.Utils.DownloadImageHelper
 import com.squareup.picasso.Picasso
+
 
 class DetailFragment : Fragment() {
     private lateinit var title: TextView
@@ -33,15 +36,17 @@ class DetailFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val rootView = inflater.inflate(R.layout.detail_layout,container,false)
+        val rootView = inflater.inflate(R.layout.detail_layout, container, false)
         title = rootView.findViewById(R.id.title)
         author = rootView.findViewById(R.id.author)
         imagen = rootView.findViewById(R.id.imagen)
         imagen.setOnClickListener {
             if (mEntry!= null && askUserPermission()){
-
                 DownloadImageHelper().downloadImage(mEntry!!.thumbnail!!, context!!)
             }
+            //Sendig user to browser
+            //sendToBrowser(mEntry!!.thumbnail!!)
+            //Instructions wasn't very clear if I shloud do or another so left download functionality
         }
         savedInstanceState?.let {
             mEntry = it.getParcelable("entrie")!!
@@ -51,11 +56,24 @@ class DetailFragment : Fragment() {
         return rootView
     }
 
+    private fun sendToBrowser(url: String) {
+        val i = Intent(Intent.ACTION_VIEW)
+        i.data = Uri.parse(url)
+        startActivity(i)
+    }
+
     private fun askUserPermission(): Boolean {
-        val permission = ContextCompat.checkSelfPermission(context!!, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        val permission = ContextCompat.checkSelfPermission(
+            context!!,
+            android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
 
         return if (permission != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(activity!!, arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE),WRITE_PERMISSION_CODE)
+            ActivityCompat.requestPermissions(
+                activity!!,
+                arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                WRITE_PERMISSION_CODE
+            )
             false
         }else{
             true
@@ -77,15 +95,23 @@ class DetailFragment : Fragment() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         mEntry?.let {
-            outState.putParcelable("entrie",mEntry)
+            outState.putParcelable("entrie", mEntry)
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         when(requestCode){
-            WRITE_PERMISSION_CODE->{
+            WRITE_PERMISSION_CODE -> {
                 if (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(context!!,"You need to give permission to download images",Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        context!!,
+                        "You need to give permission to download images",
+                        Toast.LENGTH_LONG
+                    ).show()
                 } else {
                     DownloadImageHelper().downloadImage(mEntry!!.thumbnail!!, context!!)
                 }
