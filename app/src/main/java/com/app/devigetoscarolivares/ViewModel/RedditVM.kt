@@ -48,6 +48,7 @@ class RedditVM : ViewModel() {
         // https://www.reddit.com/dev/api/ -> OverView -> Listings
         val httpBuilder: HttpUrl.Builder = URL_TOP_POST.toHttpUrlOrNull()!!.newBuilder()
         httpBuilder.addQueryParameter("after",mafter)
+        httpBuilder.addQueryParameter("limit","50")
         val request = Request.Builder()
             .url(httpBuilder.build())
             .addHeader("Authorization", "bearer $token")
