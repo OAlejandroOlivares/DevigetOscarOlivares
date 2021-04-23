@@ -2,11 +2,13 @@ package com.app.devigetoscarolivares
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Gravity
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.constraintlayout.widget.Guideline
+import androidx.drawerlayout.widget.DrawerLayout
 import com.app.devigetoscarolivares.Fragments.DetailFragment
 import com.app.devigetoscarolivares.Fragments.EntrListFragment
 import com.app.devigetoscarolivares.Models.RedditEntry
@@ -20,7 +22,7 @@ class MainActivity : AppCompatActivity(), EntrListFragment.EntrListFragmentInter
     private lateinit var detailFragment: DetailFragment
     private lateinit var viewmodel: RedditVM
     private var guideline : Guideline? = null
-
+    private lateinit var drawerLayout : DrawerLayout
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,6 +39,11 @@ class MainActivity : AppCompatActivity(), EntrListFragment.EntrListFragmentInter
             entryListFragment = supportFragmentManager.findFragmentById(R.id.entry_list) as EntrListFragment
             detailFragment = supportFragmentManager.findFragmentById(R.id.entry_detail) as DetailFragment
             entryListFragment.setListener(this)
+        }
+
+        if(guideline== null){
+            drawerLayout = findViewById(R.id.drawerLayout)
+            drawerLayout.openDrawer(Gravity.LEFT)
         }
 
 
@@ -80,6 +87,11 @@ class MainActivity : AppCompatActivity(), EntrListFragment.EntrListFragmentInter
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val inflater: MenuInflater = menuInflater
         inflater.inflate(R.menu.main_menu, menu)
+        if (guideline != null){
+            menu!!.findItem(R.id.showList).setVisible(false)
+        }else{
+            menu!!.findItem(R.id.showList).setVisible(true)
+        }
         return true
     }
 
@@ -87,6 +99,16 @@ class MainActivity : AppCompatActivity(), EntrListFragment.EntrListFragmentInter
         return when (item.itemId) {
             R.id.dismiss -> {
                 dismissallRv()
+                true
+            }
+            R.id.showList->{
+                drawerLayout?.let{
+                    if(it.isDrawerOpen(Gravity.LEFT)){
+                        it.closeDrawer(Gravity.LEFT)
+                    }else{
+                        it.openDrawer(Gravity.LEFT)
+                    }
+                }
                 true
             }
             else -> super.onOptionsItemSelected(item)

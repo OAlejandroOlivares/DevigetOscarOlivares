@@ -5,4 +5,10 @@
         android:title="@string/dismiss_all"
         android:icon="@drawable/ic_baseline_clear_all_24"
         app:showAsAction="ifRoom"/>
+
+    <item android:id="@+id/showList"
+        android:title="Show List"
+        android:icon="@drawable/ic_baseline_list_24"
+        app:showAsAction="ifRoom"/>
+
 </menu>

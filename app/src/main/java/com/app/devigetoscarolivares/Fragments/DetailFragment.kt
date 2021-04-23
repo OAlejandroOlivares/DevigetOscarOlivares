@@ -49,8 +49,10 @@ class DetailFragment : Fragment() {
             //Instructions wasn't very clear if I shloud do or another so left download functionality
         }
         savedInstanceState?.let {
-            mEntry = it.getParcelable("entrie")!!
-            displayData(mEntry!!)
+            if (it.containsKey("entrie")) {
+                mEntry = it.getParcelable("entrie")
+                displayData(mEntry!!)
+            }
         }
 
         return rootView
